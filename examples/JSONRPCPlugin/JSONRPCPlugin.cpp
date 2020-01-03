@@ -9,13 +9,15 @@ ENUM_CONVERSION_BEGIN(Data::Response::state)
     { Data::Response::IDLE, _TXT("Idle") },
     { Data::Response::FAILURE, _TXT("Failure") },
 
-    ENUM_CONVERSION_END(Data::Response::state)
+ENUM_CONVERSION_END(Data::Response::state)
 
-        namespace Plugin
+namespace Plugin
 {
-
     SERVICE_REGISTRATION(JSONRPCPlugin, 1, 0);
 
+    #ifdef __WINDOWS__
+    #pragma warning(disable : 4355)
+    #endif
     JSONRPCPlugin::JSONRPCPlugin()
         : PluginHost::JSONRPC({ 2, 3, 4 }) // version 2, 3 and 4 of the interface, use this as the default :-)
         , _job(Core::ProxyType<PeriodicSync>::Create(this))
@@ -61,6 +63,9 @@ ENUM_CONVERSION_BEGIN(Data::Response::state)
         // The only method that is really differnt in version "1" needs to be registered. That is done by the next line.
         legacyVersion.Register<Core::JSON::String, Core::JSON::String>(_T("clueless"), &JSONRPCPlugin::clueless2, this);
     }
+    #ifdef __WINDOWS__
+    #pragma warning(default : 4355)
+    #endif
 
     /* virtual */ JSONRPCPlugin::~JSONRPCPlugin()
     {
